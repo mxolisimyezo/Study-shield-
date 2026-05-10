@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Shield - Secure Your Graduation Future</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .payment-status { transition: all 0.3s ease; }
+        .payment-status.paid { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .payment-status.pending { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .payment-status.overdue { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+        .notification { animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('dashboard')">
+                    <div class="bg-white/20 p-2 rounded-lg"><i class="fas fa-graduation-cap text-2xl"></i></div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight">Study Shield</h1>
+                        <p class="text-xs text-blue-100">Secure Your Graduation Future</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <button onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded-lg hover:bg-white/20 transition flex items-center space-x-2" data-section="dashboard"><i class="fas fa-chart-line"></i><span>Dashboard</span></button>
+                    <button onclick="showSection('register')" class="nav-btn px-4 py-2 rounded-lg hover:bg-white/20 transition flex items-center space-x-2" data-section="register"><i class="fas fa-user-plus"></i><span>Register Student</span></button>
+                    <button onclick="showSection('students')" class="nav-btn px-4 py-2 rounded-lg hover:bg-white/20 transition flex items-center space-x-2" data-section="students"><i class="fas fa-users"></i><span>Clients</span></button>
+                    <button onclick="showSection('payments')" class="nav-btn px-4 py-2 rounded-lg hover:bg-white/20 transition flex items-center space-x-2" data-section="payments"><i class="fas fa-credit-card"></i><span>Payments</span></button>
+                    <button onclick="showSection('graduation')" class="nav-btn px-4 py-2 rounded-lg hover:bg-white/20 transition flex items-center space-x-2" data-section="graduation"><i class="fas fa-calendar-check"></i><span>Graduation</span></button>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-lg hover:bg-white/20"><i class="fas fa-bars text-xl"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-blue-800 border-t border-blue-700">
+            <div class="px-4 py-2 space-y-1">
+                <button onclick="showSection('dashboard')" class="block w-full text-left px-4 py-3 rounded-lg hover:bg-white/10">Dashboard</button>
+                <button onclick="showSection('register')" class="block w-full text-left px-4 py-3 rounded-lg hover:bg-white/10">Register Student</button>
+                <button onclick="showSection('students')" class="block w-full text-left px-4 py-3 rounded-lg hover:bg-white/10">Clients</button>
+                <button onclick="showSection('payments')" class="block w-full text-left px-4 py-3 rounded-lg hover:bg-white/10">Payments</button>
+                <button onclick="showSection('graduation')" class="block w-full text-left px-4 py-3 rounded-lg hover:bg-white/10">Graduation</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="dashboard" class="section-content fade-in">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
+                <p class="text-gray-600">Monitor your students, payments, and upcoming graduations</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-100 p-3 rounded-lg"><i class="fas fa-users text-blue-600 text-xl"></i></div>
+                        <span class="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full"><i class="fas fa-arrow-up mr-1"></i>Active</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="totalClients">0</h3>
+                    <p class="text-gray-500 text-sm mt-1">Total Registered Clients</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-green-100 p-3 rounded-lg"><i class="fas fa-money-bill-wave text-green-600 text-xl"></i></div>
+                        <span class="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Monthly</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="totalRevenue">R0</h3>
+                    <p class="text-gray-500 text-sm mt-1">Total Revenue Collected</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg"><i class="fas fa-calendar-alt text-purple-600 text-xl"></i></div>
+                        <span class="text-sm font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Upcoming</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="upcomingGraduations">0</h3>
+                    <p class="text-gray-500 text-sm mt-1">Graduations This Month</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover border border-gray-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-orange-100 p-3 rounded-lg"><i class="fas fa-exclamation-triangle text-orange-600 text-xl"></i></div>
+                        <span class="text-sm font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">Action Needed</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="pendingPayments">0</h3>
+                    <p class="text-gray-500 text-sm mt-1">Pending Payments</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-gray-900">Institution Distribution</h3>
+                        <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">View All</button>
+                    </div>
+                    <div class="space-y-4" id="institutionStats"></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Registrations</h3>
+                    <div class="space-y-4" id="recentRegistrations"></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-900">Upcoming Graduations</h3>
+                    <button onclick="showSection('graduation')" class="text-sm text-blue-600 hover:text-blue-800 font-medium">View Calendar</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                            <tr><th class="px-6 py-3 font-medium">Student</th><th class="px-6 py-3 font-medium">Institution</th><th class="px-6 py-3 font-medium">Graduation Date</th><th class="px-6 py-3 font-medium">Days Left</th><th class="px-6 py-3 font-medium">Status</th></tr>
+                        </thead>
+                        <tbody id="upcomingGradTable" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="register" class="section-content hidden fade-in">
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Student Registration</h2>
+                    <p class="text-gray-600">Register a new student for the Study Shield program</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="gradient-bg px-6 py-4">
+                        <h3 class="text-white font-semibold flex items-center"><i class="fas fa-user-plus mr-2"></i>New Student Application</h3>
+                    </div>
+                    <form id="registrationForm" class="p-8 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">First Name</label><input type="text" id="firstName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Enter first name"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label><input type="text" id="lastName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Enter last name"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label><input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="student@email.com"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label><input type="tel" id="phone" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="071 234 5678"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Institution</label>
+                            <select id="institution" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="">Select Institution</option>
+                                <option value="University of Cape Town">University of Cape Town</option>
+                                <option value="University of Johannesburg">University of Johannesburg</option>
+                                <option value="University of Pretoria">University of Pretoria</option>
+                                <option value="Stellenbosch University">Stellenbosch University</option>
+                                <option value="University of KwaZulu-Natal">University of KwaZulu-Natal</option>
+                                <option value="University of the Witwatersrand">University of the Witwatersrand</option>
+                                <option value="North-West University">North-West University</option>
+                                <option value="University of the Western Cape">University of the Western Cape</option>
+                                <option value="Tshwane University of Technology">Tshwane University of Technology</option>
+                                <option value="Durban University of Technology">Durban University of Technology</option>
+                                <option value="Cape Peninsula University of Technology">Cape Peninsula University of Technology</option>
+                                <option value="Vaal University of Technology">Vaal University of Technology</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Course/Program</label><input type="text" id="course" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="e.g., BSc Computer Science"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Expected Graduation Date</label><input type="date" id="graduationDate" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Student Number</label><input type="text" id="studentNumber" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Enter student number"></div>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                            <div class="flex items-start"><i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i><div><h4 class="text-sm font-semibold text-blue-900">Payment Information</h4><p class="text-sm text-blue-700 mt-1">Monthly fee: <span class="font-bold">R50.00</span>. First payment due upon registration. Subsequent payments due on the 1st of each month.</p></div></div>
+                        </div>
+                        <div class="flex items-center"><input type="checkbox" id="terms" required class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"><label for="terms" class="ml-2 block text-sm text-gray-700">I agree to the terms and conditions and authorize the monthly R50 debit order</label></div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-4 rounded-lg hover:opacity-90 transition transform hover:scale-[1.02] flex items-center justify-center space-x-2"><i class="fas fa-paper-plane"></i><span>Complete Registration</span></button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="students" class="section-content hidden fade-in">
+            <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div><h2 class="text-3xl font-bold text-gray-900 mb-2">Client Management</h2><p class="text-gray-600">View and manage all registered students</p></div>
+                <div class="flex space-x-3">
+                    <button onclick="exportData()" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition flex items-center space-x-2"><i class="fas fa-download"></i><span>Export</span></button>
+                    <button onclick="showSection('register')" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90 transition flex items-center space-x-2"><i class="fas fa-plus"></i><span>Add Student</span></button>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1"><div class="relative"><i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i><input type="text" id="searchStudents" oninput="filterStudents()" placeholder="Search by name, email, or student number..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"></div></div>
+                    <div class="md:w-48"><select id="filterInstitution" onchange="filterStudents()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"><option value="">All Institutions</option></select></div>
+                    <div class="md:w-48"><select id="filterStatus" onchange="filterStudents()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"><option value="">All Statuses</option><option value="active">Active</option><option value="graduated">Graduated</option><option value="inactive">Inactive</option></select></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                            <tr><th class="px-6 py-4 font-medium cursor-pointer hover:text-gray-900" onclick="sortStudents('name')">Student <i class="fas fa-sort ml-1"></i></th><th class="px-6 py-4 font-medium cursor-pointer hover:text-gray-900" onclick="sortStudents('institution')">Institution <i class="fas fa-sort ml-1"></i></th><th class="px-6 py-4 font-medium cursor-pointer hover:text-gray-900" onclick="sortStudents('graduation')">Graduation Date <i class="fas fa-sort ml-1"></i></th><th class="px-6 py-4 font-medium">Payments</th><th class="px-6 py-4 font-medium">Status</th><th class="px-6 py-4 font-medium text-right">Actions</th></tr>
+                        </thead>
+                        <tbody id="studentsTableBody" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+                <div id="pagination" class="px-6 py-4 border-t border-gray-100 flex items-center justify-between"></div>
+            </div>
+        </section>
+
+        <section id="payments" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold text-gray-900 mb-2">Payment Management</h2><p class="text-gray-600">Track monthly R50 payments and financial overview</p></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Payment Overview</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="text-center p-4 bg-green-50 rounded-lg"><div class="text-2xl font-bold text-green-600" id="paidCount">0</div><div class="text-xs text-green-700 mt-1">Paid This Month</div></div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg"><div class="text-2xl font-bold text-yellow-600" id="pendingCount">0</div><div class="text-xs text-yellow-700 mt-1">Pending</div></div>
+                        <div class="text-center p-4 bg-red-50 rounded-lg"><div class="text-2xl font-bold text-red-600" id="overdueCount">0</div><div class="text-xs text-red-700 mt-1">Overdue</div></div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg"><div class="text-2xl font-bold text-blue-600" id="monthlyRevenue">R0</div><div class="text-xs text-blue-700 mt-1">Expected Revenue</div></div>
+                    </div>
+                    <div class="border-t border-gray-100 pt-4"><h4 class="text-sm font-semibold text-gray-700 mb-3">Recent Transactions</h4><div class="space-y-3" id="recentTransactions"></div></div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Record Payment</h3>
+                    <form id="paymentForm" class="space-y-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Select Student</label><select id="paymentStudent" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"><option value="">Choose student...</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Month</label><input type="month" id="paymentMonth" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Amount (R)</label><input type="number" id="paymentAmount" value="50" min="50" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label><select id="paymentMethod" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"><option value="cash">Cash</option><option value="eft">EFT/Bank Transfer</option><option value="card">Card Payment</option><option value="debit">Debit Order</option></select></div>
+                        <button type="submit" class="w-full gradient-bg text-white font-bold py-3 rounded-lg hover:opacity-90 transition">Record Payment</button>
+                    </form>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center"><h3 class="text-lg font-bold text-gray-900">Payment History</h3><div class="flex space-x-2"><input type="month" id="filterPaymentMonth" onchange="filterPayments()" class="px-3 py-1 rounded-lg border border-gray-300 text-sm"></div></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider"><tr><th class="px-6 py-3 font-medium">Date</th><th class="px-6 py-3 font-medium">Student</th><th class="px-6 py-3 font-medium">Month</th><th class="px-6 py-3 font-medium">Amount</th><th class="px-6 py-3 font-medium">Method</th><th class="px-6 py-3 font-medium">Status</th></tr></thead>
+                        <tbody id="paymentHistoryBody" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="graduation" class="section-content hidden fade-in">
+            <div class="mb-8"><h2 class="text-3xl font-bold text-gray-900 mb-2">Graduation Calendar</h2><p class="text-gray-600">Plan and manage graduation ceremonies</p></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div class="flex justify-between items-center mb-6"><h3 class="text-lg font-bold text-gray-900">Upcoming Ceremonies</h3><div class="flex space-x-2"><button onclick="changeMonth(-1)" class="p-2 rounded-lg hover:bg-gray-100"><i class="fas fa-chevron-left"></i></button><span id="currentMonthDisplay" class="px-4 py-2 font-semibold"></span><button onclick="changeMonth(1)" class="p-2 rounded-lg hover:bg-gray-100"><i class="fas fa-chevron-right"></i></button></div></div>
+                    <div class="grid grid-cols-7 gap-2 mb-2 text-center text-sm font-medium text-gray-500"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-2"></div>
+                </div>
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100"><h3 class="text-lg font-bold text-gray-900 mb-4">This Month's Graduates</h3><div id="monthGraduates" class="space-y-3"></div></div>
+                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-lg p-6 text-white">
+                        <h3 class="text-lg font-bold mb-2">Ceremony Planning</h3>
+                        <p class="text-blue-100 text-sm mb-4">Study Shield handles all graduation ceremony arrangements for registered students.</p>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-300"></i> Venue Booking</div>
+                            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-300"></i> Catering Services</div>
+                            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-300"></i> Photography & Video</div>
+                            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-300"></i> Gown & Cap Hire</div>
+                            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-300"></i> Certificate Presentation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="studentModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative" style="animation: fadeIn 0.3s ease-out;">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+                <div id="modalContent" class="p-8"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-20 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 border-green-500 p-4 flex items-center space-x-3 notification">
+            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+            <div><h4 class="font-semibold text-gray-900" id="toastTitle">Success</h4><p class="text-sm text-gray-600" id="toastMessage">Operation completed successfully</p></div>
+        </div>
+    </div>
+
+    <script>
+        let students = JSON.parse(localStorage.getItem('studyShield_students')) || [];
+        let payments = JSON.parse(localStorage.getItem('studyShield_payments')) || [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let currentCalendarDate = new Date();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('dashboard');
+            updateDashboard();
+            populateFilters();
+            const today = new Date();
+            document.getElementById('paymentMonth').value = today.toISOString().slice(0, 7);
+            document.getElementById('graduationDate').min = today.toISOString().split('T')[0];
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section-content').forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.section === sectionId) btn.classList.add('bg-white/20');
+                else btn.classList.remove('bg-white/20');
+            });
+            document.getElementById('mobileMenu').classList.add('hidden');
+            if(sectionId === 'dashboard') updateDashboard();
+            if(sectionId === 'students') renderStudentsTable();
+            if(sectionId === 'payments') { updatePaymentStats(); renderPaymentHistory(); populateStudentSelect(); }
+            if(sectionId === 'graduation') renderCalendar();
+        }
+
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const student = {
+                id: Date.now(),
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                institution: document.getElementById('institution').value,
+                course: document.getElementById('course').value,
+                graduationDate: document.getElementById('graduationDate').value,
+                studentNumber: document.getElementById('studentNumber').value,
+                registrationDate: new Date().toISOString(),
+                status: 'active',
+                payments: []
+            };
+            students.push(student);
+            saveData();
+            const payment = { id: Date.now(), studentId: student.id, amount: 50, month: new Date().toISOString().slice(0, 7), date: new Date().toISOString(), method: 'registration', status: 'paid' };
+            payments.push(payment);
+            savePayments();
+            showToast('Registration Successful', student.firstName + ' ' + student.lastName + ' has been registered successfully!');
+            this.reset();
+            showSection('students');
+        });
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const payment = { id: Date.now(), studentId: parseInt(document.getElementById('paymentStudent').value), amount: parseFloat(document.getElementById('paymentAmount').value), month: document.getElementById('paymentMonth').value, date: new Date().toISOString(), method: document.getElementById('paymentMethod').value, status: 'paid' };
+            payments.push(payment);
+            savePayments();
+            const student = students.find(s => s.id === payment.studentId);
+            showToast('Payment Recorded', 'R' + payment.amount + ' recorded for ' + student.firstName + ' ' + student.lastName);
+            this.reset();
+            updatePaymentStats();
+            renderPaymentHistory();
+        });
+
+        function updateDashboard() {
+            document.getElementById('totalClients').textContent = students.length;
+            const totalRevenue = payments.reduce((sum, p) => sum + p.amount, 0);
+            document.getElementById('totalRevenue').textContent = 'R' + totalRevenue.toLocaleString();
+            const today = new Date();
+            const thisMonth = today.getMonth();
+            const thisYear = today.getFullYear();
+            const upcoming = students.filter(s => { const gradDate = new Date(s.graduationDate); return gradDate.getMonth() === thisMonth && gradDate.getFullYear() === thisYear; }).length;
+            document.getElementById('upcomingGraduations').textContent = upcoming;
+            const pending = students.filter(s => { const lastPayment = getLastPayment(s.id); if(!lastPayment) return true; const lastMonth = new Date(lastPayment.month + '-01'); const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1); return lastMonth < currentMonth; }).length;
+            document.getElementById('pendingPayments').textContent = pending;
+            renderInstitutionStats();
+            renderRecentRegistrations();
+            renderUpcomingGraduations();
+        }
+
+        function renderInstitutionStats() {
+            const stats = {};
+            students.forEach(s => { stats[s.institution] = (stats[s.institution] || 0) + 1; });
+            const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            const max = Math.max(...sorted.map(s => s[1]));
+            const container = document.getElementById('institutionStats');
+            container.innerHTML = sorted.map(([inst, count]) => '<div><div class="flex justify-between text-sm mb-1"><span class="font-medium text-gray-700">' + inst + '</span><span class="text-gray-500">' + count + ' students</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: ' + ((count/max)*100) + '%"></div></div></div>').join('');
+        }
+
+        function renderRecentRegistrations() {
+            const recent = [...students].sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate)).slice(0, 5);
+            const container = document.getElementById('recentRegistrations');
+            container.innerHTML = recent.map(s => '<div class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition cursor-pointer" onclick="viewStudent(' + s.id + ')"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold">' + s.firstName[0] + s.lastName[0] + '</div><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-900 truncate">' + s.firstName + ' ' + s.lastName + '</p><p class="text-xs text-gray-500 truncate">' + s.institution + '</p></div><span class="text-xs text-gray-400">' + formatDate(s.registrationDate) + '</span></div>').join('');
+        }
+
+        function renderUpcomingGraduations() {
+            const today = new Date();
+            const upcoming = [...students].filter(s => new Date(s.graduationDate) >= today).sort((a, b) => new Date(a.graduationDate) - new Date(b.graduationDate)).slice(0, 5);
+            const tbody = document.getElementById('upcomingGradTable');
+            tbody.innerHTML = upcoming.map(s => { const daysLeft = Math.ceil((new Date(s.graduationDate) - today) / (1000 * 60 * 60 * 24)); return '<tr class="hover:bg-gray-50 transition cursor-pointer" onclick="viewStudent(' + s.id + ')"><td class="px-6 py-4"><div class="flex items-center"><div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm mr-3">' + s.firstName[0] + '</div><div><div class="text-sm font-medium text-gray-900">' + s.firstName + ' ' + s.lastName + '</div><div class="text-xs text-gray-500">' + s.studentNumber + '</div></div></div></td><td class="px-6 py-4 text-sm text-gray-600">' + s.institution + '</td><td class="px-6 py-4 text-sm text-gray-900 font-medium">' + formatDate(s.graduationDate) + '</td><td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + (daysLeft <= 30 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800') + '">' + daysLeft + ' days</span></td><td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">On Track</span></td></tr>'; }).join('');
+        }
+
+        function renderStudentsTable() {
+            const search = document.getElementById('searchStudents').value.toLowerCase();
+            const instFilter = document.getElementById('filterInstitution').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+            let filtered = students.filter(s => { const matchesSearch = !search || s.firstName.toLowerCase().includes(search) || s.lastName.toLowerCase().includes(search) || s.email.toLowerCase().includes(search) || s.studentNumber.toLowerCase().includes(search); const matchesInst = !instFilter || s.institution === instFilter; const matchesStatus = !statusFilter || s.status === statusFilter; return matchesSearch && matchesInst && matchesStatus; });
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginated = filtered.slice(start, start + itemsPerPage);
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = paginated.map(s => { const paymentStatus = getPaymentStatus(s.id); return '<tr class="hover:bg-gray-50 transition"><td class="px-6 py-4"><div class="flex items-center"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm mr-3">' + s.firstName[0] + s.lastName[0] + '</div><div><div class="text-sm font-medium text-gray-900">' + s.firstName + ' ' + s.lastName + '</div><div class="text-xs text-gray-500">' + s.email + '</div></div></div></td><td class="px-6 py-4 text-sm text-gray-600">' + s.institution + '</td><td class="px-6 py-4 text-sm text-gray-900">' + formatDate(s.graduationDate) + '</td><td class="px-6 py-4"><span class="payment-status ' + paymentStatus.class + ' px-2 py-1 rounded-full text-xs font-medium">' + paymentStatus.text + '</span></td><td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + (s.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800') + '">' + s.status + '</span></td><td class="px-6 py-4 text-right text-sm font-medium"><button onclick="viewStudent(' + s.id + ')" class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-eye"></i></button><button onclick="deleteStudent(' + s.id + ')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button></td></tr>'; }).join('');
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            document.getElementById('pagination').innerHTML = '<div class="text-sm text-gray-500">Showing ' + (start + 1) + ' to ' + Math.min(start + itemsPerPage, filtered.length) + ' of ' + filtered.length + ' results</div><div class="flex space-x-2"><button onclick="changePage(-1)" ' + (currentPage === 1 ? 'disabled' : '') + ' class="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50"><i class="fas fa-chevron-left"></i></button><span class="px-3 py-1 text-sm text-gray-700">Page ' + currentPage + ' of ' + totalPages + '</span><button onclick="changePage(1)" ' + (currentPage === totalPages ? 'disabled' : '') + ' class="px-3 py-1 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50"><i class="fas fa-chevron-right"></i></button></div>';
+        }
+
+        function filterStudents() { currentPage = 1; renderStudentsTable(); }
+        function changePage(delta) { currentPage += delta; renderStudentsTable(); }
+        function sortStudents(field) {
+            students.sort((a, b) => { if(field === 'name') return (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName); if(field === 'institution') return a.institution.localeCompare(b.institution); if(field === 'graduation') return new Date(a.graduationDate) - new Date(b.graduationDate); });
+            renderStudentsTable();
+        }
+
+        function viewStudent(id) {
+            const student = students.find(s => s.id === id);
+            if(!student) return;
+            const studentPayments = payments.filter(p => p.studentId === id);
+            const totalPaid = studentPayments.reduce((sum, p) => sum + p.amount, 0);
+            const paymentHistory = studentPayments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const modal = document.getElementById('modalContent');
+            modal.innerHTML = '<div class="text-center mb-6"><div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">' + student.firstName[0] + student.lastName[0] + '</div><h2 class="text-2xl font-bold text-gray-900">' + student.firstName + ' ' + student.lastName + '</h2><p class="text-gray-500">' + student.studentNumber + '</p></div><div class="grid grid-cols-2 gap-4 mb-6"><div class="bg-gray-50 p-4 rounded-lg text-center"><div class="text-2xl font-bold text-blue-600">R' + totalPaid + '</div><div class="text-xs text-gray-500">Total Paid</div></div><div class="bg-gray-50 p-4 rounded-lg text-center"><div class="text-2xl font-bold text-purple-600">' + paymentHistory.length + '</div><div class="text-xs text-gray-500">Payments Made</div></div></div><div class="space-y-4 mb-6"><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Institution</span><span class="font-medium text-gray-900">' + student.institution + '</span></div><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Course</span><span class="font-medium text-gray-900">' + student.course + '</span></div><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Email</span><span class="font-medium text-gray-900">' + student.email + '</span></div><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Phone</span><span class="font-medium text-gray-900">' + student.phone + '</span></div><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Graduation Date</span><span class="font-medium text-gray-900">' + formatDate(student.graduationDate) + '</span></div><div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500">Registered</span><span class="font-medium text-gray-900">' + formatDate(student.registrationDate) + '</span></div></div><h3 class="font-bold text-gray-900 mb-3">Payment History</h3><div class="space-y-2 max-h-48 overflow-y-auto">' + (paymentHistory.length === 0 ? '<p class="text-gray-500 text-sm">No payments recorded</p>' : paymentHistory.map(p => '<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><div><div class="text-sm font-medium text-gray-900">' + formatDate(p.date) + '</div><div class="text-xs text-gray-500">' + p.method + '</div></div><div class="text-sm font-bold text-green-600">R' + p.amount + '</div></div>').join('')) + '</div>';
+            document.getElementById('studentModal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('studentModal').classList.add('hidden'); }
+
+        function deleteStudent(id) {
+            if(!confirm('Are you sure you want to delete this student? This action cannot be undone.')) return;
+            students = students.filter(s => s.id !== id);
+            payments = payments.filter(p => p.studentId !== id);
+            saveData(); savePayments(); renderStudentsTable(); showToast('Deleted', 'Student has been removed from the system');
+        }
+
+        function updatePaymentStats() {
+            const today = new Date();
+            const currentMonth = today.toISOString().slice(0, 7);
+            const thisMonthPayments = payments.filter(p => p.month === currentMonth);
+            const paid = thisMonthPayments.filter(p => p.status === 'paid').length;
+            const totalStudents = students.length;
+            document.getElementById('paidCount').textContent = paid;
+            document.getElementById('pendingCount').textContent = totalStudents - paid;
+            document.getElementById('overdueCount').textContent = Math.max(0, totalStudents - paid);
+            document.getElementById('monthlyRevenue').textContent = 'R' + (totalStudents * 50).toLocaleString();
+            const recent = [...payments].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            document.getElementById('recentTransactions').innerHTML = recent.map(p => { const s = students.find(st => st.id === p.studentId); return '<div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"><div class="flex items-center"><div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3"><i class="fas fa-check"></i></div><div><div class="text-sm font-medium text-gray-900">' + (s ? s.firstName + ' ' + s.lastName : 'Unknown') + '</div><div class="text-xs text-gray-500">' + p.month + '</div></div></div><div class="text-sm font-bold text-gray-900">R' + p.amount + '</div></div>'; }).join('');
+        }
+
+        function renderPaymentHistory() {
+            const filterMonth = document.getElementById('filterPaymentMonth').value;
+            let filtered = filterMonth ? payments.filter(p => p.month === filterMonth) : [...payments];
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const tbody = document.getElementById('paymentHistoryBody');
+            tbody.innerHTML = filtered.map(p => { const s = students.find(st => st.id === p.studentId); return '<tr class="hover:bg-gray-50 transition"><td class="px-6 py-4 text-sm text-gray-600">' + formatDate(p.date) + '</td><td class="px-6 py-4 text-sm font-medium text-gray-900">' + (s ? s.firstName + ' ' + s.lastName : 'Unknown') + '</td><td class="px-6 py-4 text-sm text-gray-600">' + p.month + '</td><td class="px-6 py-4 text-sm font-bold text-gray-900">R' + p.amount + '</td><td class="px-6 py-4 text-sm text-gray-600 capitalize">' + p.method + '</td><td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span></td></tr>'; }).join('');
+        }
+
+        function filterPayments() { renderPaymentHistory(); }
+
+        function populateStudentSelect() {
+            const select = document.getElementById('paymentStudent');
+            select.innerHTML = '<option value="">Choose student...</option>' + students.map(s => '<option value="' + s.id + '">' + s.firstName + ' ' + s.lastName + ' - ' + s.studentNumber + '</option>').join('');
+        }
+
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            document.getElementById('currentMonthDisplay').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            for(let i = 0; i < firstDay; i++) grid.innerHTML += '<div></div>';
+            for(let day = 1; day <= daysInMonth; day++) {
+                const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                const dayGraduations = students.filter(s => s.graduationDate === dateStr);
+                const hasEvent = dayGraduations.length > 0;
+                grid.innerHTML += '<div class="aspect-square border border-gray-100 rounded-lg p-2 ' + (hasEvent ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-50') + ' transition cursor-pointer relative" onclick="' + (hasEvent ? 'showDayEvents(\'' + dateStr + '\')' : '') + '"><span class="text-sm ' + (hasEvent ? 'font-bold text-blue-600' : 'text-gray-700') + '">' + day + '</span>' + (hasEvent ? '<div class="absolute bottom-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></div>' : '') + '</div>';
+            }
+            const monthGraduates = students.filter(s => { const gradDate = new Date(s.graduationDate); return gradDate.getMonth() === month && gradDate.getFullYear() === year; });
+            document.getElementById('monthGraduates').innerHTML = monthGraduates.length === 0 ? '<p class="text-gray-500 text-sm">No graduations this month</p>' : monthGraduates.map(s => '<div class="flex items-center p-3 bg-gray-50 rounded-lg"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm mr-3">' + s.firstName[0] + '</div><div class="flex-1"><div class="text-sm font-medium text-gray-900">' + s.firstName + ' ' + s.lastName + '</div><div class="text-xs text-gray-500">' + s.institution + '</div></div><div class="text-xs text-gray-500">' + new Date(s.graduationDate).getDate() + ' ' + new Date(s.graduationDate).toLocaleDateString('en-US', { month: 'short' }) + '</div></div>').join('');
+        }
+
+        function changeMonth(delta) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta); renderCalendar(); }
+        function showDayEvents(dateStr) { const dayStudents = students.filter(s => s.graduationDate === dateStr); alert('Graduations on ' + formatDate(dateStr) + ':\n' + dayStudents.map(s => '- ' + s.firstName + ' ' + s.lastName + ' (' + s.institution + ')').join('\n')); }
+
+        function getLastPayment(studentId) { const studentPayments = payments.filter(p => p.studentId === studentId && p.status === 'paid'); return studentPayments.sort((a, b) => new Date(b.month) - new Date(a.month))[0]; }
+        function getPaymentStatus(studentId) { const lastPayment = getLastPayment(studentId); if(!lastPayment) return { class: 'overdue', text: 'No Payment' }; const today = new Date(); const currentMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0'); if(lastPayment.month === currentMonth) return { class: 'paid', text: 'Paid' }; if(lastPayment.month < currentMonth) return { class: 'overdue', text: 'Overdue' }; return { class: 'pending', text: 'Pending' }; }
+        function formatDate(dateStr) { return new Date(dateStr).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }); }
+        function populateFilters() { const institutions = [...new Set(students.map(s => s.institution))].sort(); const select = document.getElementById('filterInstitution'); select.innerHTML = '<option value="">All Institutions</option>' + institutions.map(i => '<option value="' + i + '">' + i + '</option>').join(''); }
+        function saveData() { localStorage.setItem('studyShield_students', JSON.stringify(students)); }
+        function savePayments() { localStorage.setItem('studyShield_payments', JSON.stringify(payments)); }
+        function showToast(title, message) { const toast = document.getElementById('toast'); document.getElementById('toastTitle').textContent = title; document.getElementById('toastMessage').textContent = message; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
+        function exportData() { const data = { students: students, payments: payments, exportDate: new Date().toISOString() }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'study-shield-data-' + new Date().toISOString().split('T')[0] + '.json'; a.click(); showToast('Export Complete', 'Data has been downloaded successfully'); }
+
+        if(students.length === 0) {
+            const demoStudents = [
+                { id: 1, firstName: 'Thabo', lastName: 'Mokoena', email: 'thabo.m@email.com', phone: '071 123 4567', institution: 'University of Johannesburg', course: 'BCom Accounting', graduationDate: '2026-11-15', studentNumber: '219012345', registrationDate: '2026-01-15T10:00:00Z', status: 'active' },
+                { id: 2, firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.j@email.com', phone: '082 234 5678', institution: 'University of Cape Town', course: 'BSc Computer Science', graduationDate: '2026-12-10', studentNumber: 'MBN123456', registrationDate: '2026-02-01T14:30:00Z', status: 'active' },
+                { id: 3, firstName: 'Lerato', lastName: 'Ndlovu', email: 'lerato.n@email.com', phone: '073 345 6789', institution: 'University of Pretoria', course: 'LLB Law', graduationDate: '2027-03-20', studentNumber: 'u12345678', registrationDate: '2026-03-10T09:15:00Z', status: 'active' },
+                { id: 4, firstName: 'Michael', lastName: 'Brown', email: 'michael.b@email.com', phone: '084 456 7890', institution: 'Stellenbosch University', course: 'BEng Mechanical', graduationDate: '2026-12-15', studentNumber: 'S21678901', registrationDate: '2026-01-20T11:45:00Z', status: 'active' },
+                { id: 5, firstName: 'Precious', lastName: 'Khumalo', email: 'precious.k@email.com', phone: '085 567 8901', institution: 'University of KwaZulu-Natal', course: 'MBChB Medicine', graduationDate: '2027-06-30', studentNumber: '218901234', registrationDate: '2026-04-05T13:20:00Z', status: 'active' }
+            ];
+            const demoPayments = [
+                { id: 1, studentId: 1, amount: 50, month: '2026-01', date: '2026-01-15T10:00:00Z', method: 'registration', status: 'paid' },
+                { id: 2, studentId: 1, amount: 50, month: '2026-02', date: '2026-02-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 3, studentId: 1, amount: 50, month: '2026-03', date: '2026-03-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 4, studentId: 1, amount: 50, month: '2026-04', date: '2026-04-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 5, studentId: 2, amount: 50, month: '2026-02', date: '2026-02-01T14:30:00Z', method: 'registration', status: 'paid' },
+                { id: 6, studentId: 2, amount: 50, month: '2026-03', date: '2026-03-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 7, studentId: 2, amount: 50, month: '2026-04', date: '2026-04-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 8, studentId: 3, amount: 50, month: '2026-03', date: '2026-03-10T09:15:00Z', method: 'registration', status: 'paid' },
+                { id: 9, studentId: 3, amount: 50, month: '2026-04', date: '2026-04-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 10, studentId: 4, amount: 50, month: '2026-01', date: '2026-01-20T11:45:00Z', method: 'registration', status: 'paid' },
+                { id: 11, studentId: 4, amount: 50, month: '2026-02', date: '2026-02-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 12, studentId: 4, amount: 50, month: '2026-03', date: '2026-03-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 13, studentId: 4, amount: 50, month: '2026-04', date: '2026-04-01T09:00:00Z', method: 'debit', status: 'paid' },
+                { id: 14, studentId: 5, amount: 50, month: '2026-04', date: '2026-04-05T13:20:00Z', method: 'registration', status: 'paid' }
+            ];
+            students = demoStudents;
+            payments = demoPayments;
+            saveData();
+            savePayments();
+            updateDashboard();
+        }
+    </script>
+</body>
+</html>
